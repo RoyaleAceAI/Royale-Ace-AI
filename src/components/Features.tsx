@@ -7,7 +7,8 @@ import {
   Target, 
   GraduationCap,
   Sparkles,
-  Trophy
+  Trophy,
+  Puzzle
 } from "lucide-react";
 
 const Features = () => {
@@ -41,6 +42,12 @@ const Features = () => {
       title: "Precision Feedback",
       description: "Pinpoint exact moments where better plays could have changed the outcome.",
       gradient: false
+    },
+    {
+      icon: Puzzle,
+      title: "Interactive Puzzles",
+      description: "Practice with real gameplay scenarios. Drag and drop troops to solve strategic challenges.",
+      gradient: true
     },
     {
       icon: GraduationCap,

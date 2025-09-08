@@ -12,6 +12,13 @@ import {
   HelpCircle,
   ChevronRight
 } from "lucide-react";
+import arenaBg from "@/assets/clash-royale/arena-bg.jpg";
+import blueKingTower from "@/assets/clash-royale/blue-king-tower.png";
+import redKingTower from "@/assets/clash-royale/red-king-tower.png";
+import knightImg from "@/assets/clash-royale/knight.png";
+import archerImg from "@/assets/clash-royale/archer.png";
+import giantImg from "@/assets/clash-royale/giant.png";
+import wizardImg from "@/assets/clash-royale/wizard.png";
 
 interface TroopPosition {
   id: string;
@@ -56,6 +63,20 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
       case "advanced": return "destructive";
       default: return "default";
     }
+  };
+
+  const getTroopImage = (type: string) => {
+    const images: Record<string, string> = {
+      "Knight": knightImg,
+      "Archer": archerImg,
+      "Giant": giantImg,
+      "Wizard": wizardImg,
+      "K": knightImg,
+      "A": archerImg,
+      "G": giantImg,
+      "W": wizardImg,
+    };
+    return images[type] || images[type[0]] || knightImg;
   };
 
   const handleDragStart = (card: string) => {
@@ -160,10 +181,18 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
       <Card className="relative bg-gradient-card border-primary/30 overflow-hidden">
         <div 
           ref={battlefieldRef}
-          className="relative h-96 bg-gradient-to-b from-destructive/10 via-transparent to-primary/10"
+          className="relative h-96"
+          style={{
+            backgroundImage: `url(${arenaBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
+          {/* Semi-transparent overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-destructive/20 via-transparent/10 to-primary/20" />
+          
           {/* Grid overlay */}
           <div className="absolute inset-0 grid grid-cols-9 grid-rows-15 pointer-events-none">
             {Array.from({ length: 135 }).map((_, i) => (
@@ -172,51 +201,69 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
           </div>
 
           {/* Towers */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-24">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-destructive/20 border-2 border-destructive rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-destructive">
-                  {puzzle.opponentTowerHealth.left}
-                </span>
-              </div>
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-20">
+            <div className="relative">
+              <img 
+                src={redKingTower}
+                alt="Left Tower"
+                className="w-12 h-12 object-contain drop-shadow-lg"
+              />
+              <Badge variant="destructive" className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs">
+                {puzzle.opponentTowerHealth.left}
+              </Badge>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-destructive/20 border-2 border-destructive rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-destructive">
-                  {puzzle.opponentTowerHealth.king}
-                </span>
-              </div>
+            <div className="relative">
+              <img 
+                src={redKingTower}
+                alt="King Tower"
+                className="w-16 h-16 object-contain drop-shadow-lg"
+              />
+              <Badge variant="destructive" className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs">
+                {puzzle.opponentTowerHealth.king}
+              </Badge>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-destructive/20 border-2 border-destructive rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-destructive">
-                  {puzzle.opponentTowerHealth.right}
-                </span>
-              </div>
+            <div className="relative">
+              <img 
+                src={redKingTower}
+                alt="Right Tower"
+                className="w-12 h-12 object-contain drop-shadow-lg"
+              />
+              <Badge variant="destructive" className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs">
+                {puzzle.opponentTowerHealth.right}
+              </Badge>
             </div>
           </div>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-24">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary/20 border-2 border-primary rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-primary">
-                  {puzzle.playerTowerHealth.left}
-                </span>
-              </div>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-20">
+            <div className="relative">
+              <img 
+                src={blueKingTower}
+                alt="Left Tower"
+                className="w-12 h-12 object-contain drop-shadow-lg"
+              />
+              <Badge variant="default" className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs">
+                {puzzle.playerTowerHealth.left}
+              </Badge>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/20 border-2 border-primary rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-primary">
-                  {puzzle.playerTowerHealth.king}
-                </span>
-              </div>
+            <div className="relative">
+              <img 
+                src={blueKingTower}
+                alt="King Tower"
+                className="w-16 h-16 object-contain drop-shadow-lg"
+              />
+              <Badge variant="default" className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs">
+                {puzzle.playerTowerHealth.king}
+              </Badge>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary/20 border-2 border-primary rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-primary">
-                  {puzzle.playerTowerHealth.right}
-                </span>
-              </div>
+            <div className="relative">
+              <img 
+                src={blueKingTower}
+                alt="Right Tower"
+                className="w-12 h-12 object-contain drop-shadow-lg"
+              />
+              <Badge variant="default" className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs">
+                {puzzle.playerTowerHealth.right}
+              </Badge>
             </div>
           </div>
 
@@ -224,16 +271,24 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
           {puzzle.existingTroops.map(troop => (
             <div
               key={troop.id}
-              className="absolute w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold animate-pulse-glow"
+              className={`absolute rounded-lg p-1 ${
+                troop.side === 'player' 
+                  ? 'bg-primary/30 border-2 border-primary' 
+                  : 'bg-destructive/30 border-2 border-destructive'
+              }`}
               style={{
                 left: `${troop.x}%`,
                 top: `${troop.y}%`,
                 transform: 'translate(-50%, -50%)',
-                backgroundColor: troop.side === 'player' ? 'hsl(var(--primary) / 0.8)' : 'hsl(var(--destructive) / 0.8)',
-                color: 'white'
+                width: '40px',
+                height: '40px'
               }}
             >
-              {troop.type[0]}
+              <img 
+                src={getTroopImage(troop.type)}
+                alt={troop.type}
+                className="w-full h-full object-contain"
+              />
             </div>
           ))}
 
@@ -241,14 +296,20 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
           {placedCards.map((placed, index) => (
             <div
               key={index}
-              className="absolute w-10 h-10 bg-accent/80 rounded-lg flex items-center justify-center text-xs font-bold text-accent-foreground shadow-neon"
+              className="absolute bg-accent/30 border-2 border-accent rounded-lg p-1 shadow-lg"
               style={{
                 left: `${placed.x}%`,
                 top: `${placed.y}%`,
-                transform: 'translate(-50%, -50%)'
+                transform: 'translate(-50%, -50%)',
+                width: '44px',
+                height: '44px'
               }}
             >
-              {placed.card[0]}
+              <img 
+                src={getTroopImage(placed.card)}
+                alt={placed.card}
+                className="w-full h-full object-contain"
+              />
             </div>
           ))}
 
@@ -256,14 +317,20 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
           {showSolution && puzzle.optimalSolution.map((solution, index) => (
             <div
               key={index}
-              className="absolute w-10 h-10 bg-success/30 border-2 border-success rounded-lg flex items-center justify-center text-xs font-bold text-success animate-pulse"
+              className="absolute bg-success/30 border-2 border-success rounded-lg p-1 animate-pulse"
               style={{
                 left: `${solution.x}%`,
                 top: `${solution.y}%`,
-                transform: 'translate(-50%, -50%)'
+                transform: 'translate(-50%, -50%)',
+                width: '44px',
+                height: '44px'
               }}
             >
-              {solution.card[0]}
+              <img 
+                src={getTroopImage(solution.card)}
+                alt={solution.card}
+                className="w-full h-full object-contain"
+              />
             </div>
           ))}
 
@@ -289,8 +356,12 @@ const PuzzleBattlefield = ({ puzzle, onComplete }: PuzzleBattlefieldProps) => {
               onDragStart={() => handleDragStart(card)}
               className="w-20 h-24 bg-gradient-card border-2 border-primary/30 rounded-lg flex flex-col items-center justify-center cursor-move hover:border-primary hover:shadow-glow transition-all"
             >
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-2">
-                <Target className="w-6 h-6 text-primary" />
+              <div className="w-12 h-12 rounded-lg overflow-hidden mb-2">
+                <img 
+                  src={getTroopImage(card)}
+                  alt={card}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="text-xs text-foreground font-medium">{card}</span>
             </div>

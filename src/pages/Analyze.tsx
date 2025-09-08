@@ -2,15 +2,20 @@ import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
-import { Upload, User, ArrowRight, Video, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { useState, useRef } from "react";
+import { Upload, User, ArrowRight, Video, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { AIAnalysisService } from "@/services/aiAnalysisService";
 
 const Analyze = () => {
   const [supercellId, setSupercellId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"id" | "video">("id");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "processing" | "complete">("idle");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -36,18 +41,87 @@ const Analyze = () => {
     }, 2000);
   };
 
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setIsLoading(true);
-      // Simulate upload
+    if (!file) return;
+
+    // Validate file size (500MB limit)
+    const maxSize = 500 * 1024 * 1024; // 500MB in bytes
+    if (file.size > maxSize) {
+      toast({
+        title: "File too large",
+        description: "Please upload a video smaller than 500MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file type
+    const validTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm'];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an MP4, MOV, AVI, or WebM video",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setUploadStatus("uploading");
+    setUploadProgress(0);
+
+    // Simulate upload progress
+    const progressInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(progressInterval);
+          return 90;
+        }
+        return prev + 10;
+      });
+    }, 300);
+
+    try {
+      // Simulate AI analysis
+      toast({
+        title: "Video uploaded successfully",
+        description: "AI is now analyzing your gameplay...",
+      });
+      
+      setUploadStatus("processing");
+      setUploadProgress(95);
+
+      // Call AI analysis service
+      const analysis = await AIAnalysisService.analyzeVideo(file);
+      
+      setUploadProgress(100);
+      setUploadStatus("complete");
+      
+      // Store analysis in sessionStorage for results page
+      sessionStorage.setItem('analysis', JSON.stringify(analysis));
+      
+      toast({
+        title: "Analysis Complete",
+        description: `Found ${analysis.mistakes.length} areas for improvement`,
+      });
+      
       setTimeout(() => {
-        toast({
-          title: "Upload Complete",
-          description: "Analyzing your gameplay video...",
-        });
         navigate("/results");
-      }, 2000);
+      }, 1000);
+      
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast({
+        title: "Analysis failed",
+        description: "Please try again or contact support",
+        variant: "destructive",
+      });
+      setUploadStatus("idle");
+      setIsLoading(false);
+      setUploadProgress(0);
+    } finally {
+      clearInterval(progressInterval);
     }
   };
 
@@ -152,43 +226,86 @@ const Analyze = () => {
                   Upload Gameplay Video
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  Upload a recorded match for frame-by-frame analysis
+                  Upload a recorded match for AI-powered frame-by-frame analysis
                 </p>
 
-                <div className="border-2 border-dashed border-primary/30 rounded-xl p-8 hover:border-primary/50 transition-colors">
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoUpload}
-                    className="hidden"
-                    id="video-upload"
-                    disabled={isLoading}
-                  />
-                  <label 
-                    htmlFor="video-upload" 
-                    className="cursor-pointer"
-                  >
-                    <div className="flex flex-col items-center gap-4">
-                      {isLoading ? (
-                        <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                      ) : (
+                {uploadStatus === "idle" && (
+                  <div className="border-2 border-dashed border-primary/30 rounded-xl p-8 hover:border-primary/50 transition-colors">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/x-msvideo,video/webm"
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                      id="video-upload"
+                      disabled={isLoading}
+                    />
+                    <label 
+                      htmlFor="video-upload" 
+                      className="cursor-pointer"
+                    >
+                      <div className="flex flex-col items-center gap-4">
                         <Video className="w-12 h-12 text-primary" />
-                      )}
-                      <div>
-                        <p className="text-foreground font-medium mb-1">
-                          {isLoading ? "Processing video..." : "Click to upload video"}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          MP4, MOV, or AVI (Max 500MB)
-                        </p>
+                        <div>
+                          <p className="text-foreground font-medium mb-1">
+                            Click to upload video or drag and drop
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            MP4, MOV, AVI, or WebM (Max 500MB)
+                          </p>
+                        </div>
+                        <Button variant="hero" size="sm" type="button">
+                          Choose File
+                        </Button>
                       </div>
-                    </div>
-                  </label>
-                </div>
+                    </label>
+                  </div>
+                )}
 
-                <div className="mt-6 text-sm text-muted-foreground">
-                  <p>Supported: Full matches or key moments</p>
-                  <p>Processing time: 1-2 minutes</p>
+                {uploadStatus !== "idle" && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      {uploadStatus === "uploading" && (
+                        <>
+                          <Upload className="w-5 h-5 text-primary animate-pulse" />
+                          <span className="text-foreground">Uploading video...</span>
+                        </>
+                      )}
+                      {uploadStatus === "processing" && (
+                        <>
+                          <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                          <span className="text-foreground">AI is analyzing your gameplay...</span>
+                        </>
+                      )}
+                      {uploadStatus === "complete" && (
+                        <>
+                          <CheckCircle className="w-5 h-5 text-success" />
+                          <span className="text-success">Analysis complete!</span>
+                        </>
+                      )}
+                    </div>
+                    
+                    <Progress value={uploadProgress} className="h-2" />
+                    
+                    <p className="text-sm text-muted-foreground">
+                      {uploadStatus === "uploading" && `Uploading: ${uploadProgress}%`}
+                      {uploadStatus === "processing" && "Identifying mistakes and opportunities..."}
+                      {uploadStatus === "complete" && "Redirecting to results..."}
+                    </p>
+                  </div>
+                )}
+
+                <div className="mt-6 p-4 bg-primary/5 rounded-lg">
+                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-primary" />
+                    AI Analysis Process
+                  </h4>
+                  <ul className="text-sm text-muted-foreground space-y-1 text-left">
+                    <li>• AI detects all troops, spells, and buildings frame-by-frame</li>
+                    <li>• Analyzes elixir trades and placement decisions</li>
+                    <li>• Compares your plays to optimal strategies from pro players</li>
+                    <li>• Provides timestamped feedback for each mistake</li>
+                  </ul>
                 </div>
               </div>
             </Card>

@@ -7,9 +7,10 @@ const Navigation = () => {
 
   const links = [
     { href: "/", label: "Home", icon: Home },
+    { href: "/player-stats", label: "Players", icon: Crown },
+    { href: "/leaderboards", label: "Leaderboards", icon: Trophy },
     { href: "/analyze", label: "Analyze", icon: Sparkles },
-    { href: "/puzzles", label: "Puzzles", icon: Trophy },
-    { href: "/results", label: "Results", icon: BarChart3 },
+    { href: "/puzzles", label: "Puzzles", icon: BarChart3 },
   ];
 
   return (

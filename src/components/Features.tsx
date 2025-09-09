@@ -8,52 +8,57 @@ import {
   GraduationCap,
   Sparkles,
   Trophy,
-  Puzzle
+  Puzzle,
+  Crown,
+  Users
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Features = () => {
+  const navigate = useNavigate();
+  
   const features = [
     {
-      icon: User,
-      title: "Supercell ID Integration",
-      description: "Connect your account instantly and analyze your recent matches with one click.",
-      gradient: true
+      icon: Crown,
+      title: "Player Stats Lookup",
+      description: "Search any player by tag and view detailed statistics, battle history, and achievements.",
+      gradient: true,
+      onClick: () => navigate('/player-stats')
+    },
+    {
+      icon: Trophy,
+      title: "Global Leaderboards",
+      description: "Browse top players and clans worldwide, Path of Legends rankings, and regional leaders.",
+      gradient: false,
+      onClick: () => navigate('/leaderboards')
     },
     {
       icon: Video,
       title: "Video Upload Analysis",
       description: "Upload gameplay recordings and get frame-by-frame breakdown of your plays.",
-      gradient: false
+      gradient: false,
+      onClick: () => navigate('/analyze')
     },
     {
       icon: Brain,
       title: "AI Mistake Detection",
       description: "Advanced AI trained on thousands of pro matches identifies tactical errors.",
-      gradient: false
-    },
-    {
-      icon: ChartBar,
-      title: "Detailed Reports",
-      description: "Get comprehensive stats on elixir efficiency, placement accuracy, and timing.",
-      gradient: true
-    },
-    {
-      icon: Target,
-      title: "Precision Feedback",
-      description: "Pinpoint exact moments where better plays could have changed the outcome.",
-      gradient: false
+      gradient: true,
+      onClick: () => navigate('/analyze')
     },
     {
       icon: Puzzle,
       title: "Interactive Puzzles",
       description: "Practice with real gameplay scenarios. Drag and drop troops to solve strategic challenges.",
-      gradient: true
+      gradient: true,
+      onClick: () => navigate('/puzzles')
     },
     {
       icon: GraduationCap,
       title: "Learning Mode",
       description: "Personalized drills and challenges based on your specific weaknesses.",
-      gradient: false
+      gradient: false,
+      onClick: () => navigate('/puzzles')
     }
   ];
 

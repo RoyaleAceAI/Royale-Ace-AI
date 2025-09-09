@@ -19,8 +19,18 @@ const Leaderboards = () => {
   const [locationPlayers, setLocationPlayers] = useState<LeaderboardPlayer[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSeason, setCurrentSeason] = useState<string>("");
+  const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('CR_API_KEY') || '') : '');
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const saveApiKey = () => {
+    try {
+      localStorage.setItem('CR_API_KEY', apiKeyInput.trim());
+      toast({ title: "API Key saved", description: "Your Clash Royale API key was saved locally." });
+    } catch {
+      toast({ title: "Failed to save key", description: "Please try again.", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     loadInitialData();
@@ -189,9 +199,20 @@ const Leaderboards = () => {
           <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
             Leaderboards
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-3">
             Top players and clans from around the world
           </p>
+          <div className="flex gap-2 max-w-2xl">
+            <input
+              className="flex-1 bg-background border border-border rounded-md px-3 py-2 text-sm"
+              placeholder="Enter Clash Royale API key (stored locally)"
+              value={apiKeyInput}
+              onChange={(e) => setApiKeyInput(e.target.value)}
+            />
+            <button onClick={saveApiKey} className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm">
+              Save Key
+            </button>
+          </div>
         </div>
 
         <Tabs defaultValue="global" className="w-full">

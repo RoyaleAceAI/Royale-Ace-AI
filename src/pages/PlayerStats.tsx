@@ -17,9 +17,18 @@ const PlayerStats = () => {
   const [loading, setLoading] = useState(false);
   const [battleLog, setBattleLog] = useState<any[]>([]);
   const [upcomingChests, setUpcomingChests] = useState<any[]>([]);
+  const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('CR_API_KEY') || '') : '');
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const saveApiKey = () => {
+    try {
+      localStorage.setItem('CR_API_KEY', apiKeyInput.trim());
+      toast({ title: "API Key saved", description: "Your Clash Royale API key was saved locally." });
+    } catch {
+      toast({ title: "Failed to save key", description: "Please try again.", variant: "destructive" });
+    }
+  };
   const searchPlayer = async () => {
     if (!searchTag) {
       toast({
@@ -79,18 +88,28 @@ const PlayerStats = () => {
           <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
             Player Stats
           </h1>
-          <div className="flex gap-2 max-w-md">
-            <Input
-              placeholder="Enter player tag (e.g., #2PP)"
-              value={searchTag}
-              onChange={(e) => setSearchTag(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && searchPlayer()}
-              className="flex-1"
-            />
-            <Button onClick={searchPlayer} disabled={loading} variant="glow">
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </Button>
+          <div className="flex flex-col gap-3 max-w-2xl">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter Clash Royale API key (stored locally)"
+                value={apiKeyInput}
+                onChange={(e) => setApiKeyInput(e.target.value)}
+              />
+              <Button variant="secondary" onClick={saveApiKey}>Save Key</Button>
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter player tag (e.g., #2PP)"
+                value={searchTag}
+                onChange={(e) => setSearchTag(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && searchPlayer()}
+                className="flex-1"
+              />
+              <Button onClick={searchPlayer} disabled={loading} variant="glow">
+                <Search className="w-4 h-4 mr-2" />
+                Search
+              </Button>
+            </div>
           </div>
         </div>
 

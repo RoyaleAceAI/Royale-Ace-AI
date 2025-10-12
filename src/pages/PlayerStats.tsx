@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Trophy, Shield, Swords, Crown, Users, Activity, TrendingUp, Award, Star } from "lucide-react";
 import { clashRoyaleApi, type Player } from "@/services/clashRoyaleApi";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const PlayerStats = () => {
   const [searchTag, setSearchTag] = useState("");
@@ -18,6 +19,8 @@ const PlayerStats = () => {
   const [battleLog, setBattleLog] = useState<any[]>([]);
   const [upcomingChests, setUpcomingChests] = useState<any[]>([]);
   const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('CR_API_KEY') || '') : '');
+  const [aiCoaching, setAiCoaching] = useState("");
+  const [loadingCoach, setLoadingCoach] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -57,6 +60,9 @@ const PlayerStats = () => {
         title: "Success",
         description: `Found player: ${playerData.name}`,
       });
+
+      // Get AI coaching
+      getAiCoaching(playerData, battles);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -76,6 +82,35 @@ const PlayerStats = () => {
   const calculateThreeCrownRate = () => {
     if (!player || player.wins === 0) return 0;
     return ((player.threeCrownWins / player.wins) * 100).toFixed(1);
+  };
+
+  const getAiCoaching = async (playerData: Player, battles: any[]) => {
+    setLoadingCoach(true);
+    try {
+      const { data: coachingData, error: coachError } = await supabase.functions.invoke('ai-coach', {
+        body: { 
+          playerData,
+          replayData: battles.slice(0, 5)
+        }
+      });
+
+      if (coachError) throw coachError;
+      
+      setAiCoaching(coachingData.coaching);
+      toast({
+        title: "AI Coach Ready",
+        description: "Personalized coaching advice generated!",
+      });
+    } catch (err: any) {
+      console.error('AI coaching error:', err);
+      toast({
+        title: "Coaching Unavailable",
+        description: "Could not generate AI coaching at this time.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCoach(false);
+    }
   };
 
   return (
@@ -151,8 +186,9 @@ const PlayerStats = () => {
 
             {/* Stats Tabs */}
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="ai-coach">AI Coach</TabsTrigger>
                 <TabsTrigger value="battles">Battles</TabsTrigger>
                 <TabsTrigger value="cards">Cards</TabsTrigger>
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
@@ -278,6 +314,37 @@ const PlayerStats = () => {
                     </CardContent>
                   </Card>
                 )}
+              </TabsContent>
+
+              <TabsContent value="ai-coach" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5" />
+                      AI Coach Analysis
+                    </CardTitle>
+                    <CardDescription>
+                      Personalized gameplay insights powered by Gemini AI
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {loadingCoach ? (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                        <p className="text-muted-foreground">Analyzing your gameplay...</p>
+                      </div>
+                    ) : aiCoaching ? (
+                      <div className="prose prose-sm max-w-none dark:prose-invert">
+                        <div className="whitespace-pre-wrap text-foreground">{aiCoaching}</div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground mb-2">AI coaching will appear here after searching for a player.</p>
+                        <p className="text-sm text-muted-foreground">Get personalized tips to improve your gameplay!</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="battles" className="space-y-4">

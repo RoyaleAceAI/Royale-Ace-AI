@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Trophy, Crown, TrendingUp, Users, Globe, Medal, ChevronUp, ChevronDown, Minus } from "lucide-react";
 import { clashRoyaleApi, type LeaderboardPlayer } from "@/services/clashRoyaleApi";
 import { useToast } from "@/hooks/use-toast";
@@ -19,18 +18,9 @@ const Leaderboards = () => {
   const [locationPlayers, setLocationPlayers] = useState<LeaderboardPlayer[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSeason, setCurrentSeason] = useState<string>("");
-  const [apiKeyInput, setApiKeyInput] = useState<string>(typeof window !== 'undefined' ? (localStorage.getItem('CR_API_KEY') || '') : '');
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const saveApiKey = () => {
-    try {
-      localStorage.setItem('CR_API_KEY', apiKeyInput.trim());
-      toast({ title: "API Key saved", description: "Your Clash Royale API key was saved locally." });
-    } catch {
-      toast({ title: "Failed to save key", description: "Please try again.", variant: "destructive" });
-    }
-  };
 
   useEffect(() => {
     loadInitialData();
@@ -202,17 +192,6 @@ const Leaderboards = () => {
           <p className="text-muted-foreground mb-3">
             Top players and clans from around the world
           </p>
-          <div className="flex gap-2 max-w-2xl">
-            <input
-              className="flex-1 bg-background border border-border rounded-md px-3 py-2 text-sm"
-              placeholder="Enter Clash Royale API key (stored locally)"
-              value={apiKeyInput}
-              onChange={(e) => setApiKeyInput(e.target.value)}
-            />
-            <button onClick={saveApiKey} className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm">
-              Save Key
-            </button>
-          </div>
         </div>
 
         <Tabs defaultValue="global" className="w-full">

@@ -1,25 +1,5 @@
-// Clash Royale API Service
-// Note: In production, this should use Supabase Edge Functions for security
-const API_BASE_URL = 'https://api.clashroyale.com/v1';
-
-// This is a private API key - for development only
-// In production, use Supabase Edge Functions or environment variables
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjNmNjA4Yzk4LWM3YmQtNGExYi05ZTc5LTUyOTk1Y2YyMWJiMiIsImlhdCI6MTc1NzI5NDE1Miwic3ViIjoiZGV2ZWxvcGVyLzc1YTU2MTdjLTNmMjMtZGRjNi0xOTVkLTFiYzBlMWRhZGViMSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI1MS44MS45My43NSJdLCJ0eXBlIjoiY2xpZW50In1dfQ.pExQwh9u1jOzSFb25oG2IpS1DNYMV9dco8mC7E0u62qUfeKZwkQu1kDyTOd4rFIj7wUPtDnIOZ3EykOFum18yg';
-
-const USE_DEV_PROXY = true;
-const PROXY_URL = 'https://proxy.cors.sh';
-
-const getHeaders = (useProxy: boolean) => {
-  const key = typeof window !== 'undefined' ? (localStorage.getItem('CR_API_KEY') || API_KEY) : API_KEY;
-  const h: Record<string, string> = {
-    'Authorization': `Bearer ${key}`,
-    'Content-Type': 'application/json'
-  };
-  if (useProxy) {
-    (h as any)['x-cors-api-key'] = 'temp';
-  }
-  return h;
-};
+// Clash Royale API Service using Supabase Edge Function
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Player {
   tag: string;
@@ -163,20 +143,12 @@ export interface LeaderboardPlayer {
 class ClashRoyaleAPI {
   private async fetchAPI(endpoint: string) {
     try {
-      const url = `${USE_DEV_PROXY ? PROXY_URL : ''}${API_BASE_URL}${endpoint}`;
-      const response = await fetch(url, { headers: getHeaders(USE_DEV_PROXY) });
+      const { data, error } = await supabase.functions.invoke('clash-royale-proxy', {
+        body: { endpoint }
+      });
       
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Player or resource not found');
-        }
-        if (response.status === 403) {
-          throw new Error('API key invalid or IP not authorized');
-        }
-        throw new Error(`API Error: ${response.status}`);
-      }
-      
-      return await response.json();
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Clash Royale API Error:', error);
       throw error;

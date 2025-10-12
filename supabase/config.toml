@@ -2,3 +2,7 @@ project_id = "nxmpedmacgmvgjnzjocl"
 
 [functions.ai-coach]
 verify_jwt = false
+
+[functions.clash-royale-proxy]
+verify_jwt = false
+

@@ -1,6 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import ClashRoyaleAPI from "npm:clash-royale-api@3.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,38 +25,34 @@ serve(async (req) => {
 
     console.log('Fetching Clash Royale API:', endpoint);
 
-    // Initialize the API client
-    const api = new ClashRoyaleAPI(API_KEY);
-    
-    let data;
-    
-    // Parse the endpoint and call the appropriate method
-    if (endpoint.startsWith('/players/')) {
-      const playerTag = endpoint.split('/players/')[1].split('/')[0];
-      if (endpoint.includes('/upcomingchests')) {
-        data = await api.playerUpcomingChests(decodeURIComponent(playerTag));
-      } else if (endpoint.includes('/battlelog')) {
-        data = await api.playerBattles(decodeURIComponent(playerTag));
-      } else {
-        data = await api.player(decodeURIComponent(playerTag));
+    const response = await fetch(`https://api.clashroyale.com/v1${endpoint}`, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Clash Royale API error:', response.status, errorText);
+      
+      if (response.status === 404) {
+        return new Response(
+          JSON.stringify({ error: 'Player or resource not found' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
-    } else if (endpoint.startsWith('/clans/')) {
-      const clanTag = endpoint.split('/clans/')[1];
-      data = await api.clan(decodeURIComponent(clanTag));
-    } else if (endpoint.includes('/rankings/players')) {
-      const limit = new URL(`http://dummy.com${endpoint}`).searchParams.get('limit') || '100';
-      if (endpoint.includes('/locations/global/')) {
-        data = await api.topPlayers({ limit: parseInt(limit) });
+      if (response.status === 403) {
+        return new Response(
+          JSON.stringify({ error: 'IP restriction: Your API key only allows requests from 51.81.93.75. Please remove IP restrictions in your Clash Royale API settings.' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
-    } else if (endpoint.includes('/rankings/clans')) {
-      const limit = new URL(`http://dummy.com${endpoint}`).searchParams.get('limit') || '100';
-      data = await api.topClans({ limit: parseInt(limit) });
-    } else if (endpoint === '/locations') {
-      data = await api.locations();
-    } else {
-      throw new Error(`Unsupported endpoint: ${endpoint}`);
+      
+      throw new Error(`API Error: ${response.status}`);
     }
 
+    const data = await response.json();
     console.log('Clash Royale API success');
 
     return new Response(

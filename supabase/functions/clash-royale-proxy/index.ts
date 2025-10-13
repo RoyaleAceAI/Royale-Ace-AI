@@ -25,7 +25,8 @@ serve(async (req) => {
 
     console.log('Fetching Clash Royale API:', endpoint);
 
-    const response = await fetch(`https://api.clashroyale.com/v1${endpoint}`, {
+    // Use RoyaleAPI proxy to avoid IP restrictions
+    const response = await fetch(`https://proxy.royaleapi.dev/v1${endpoint}`, {
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',

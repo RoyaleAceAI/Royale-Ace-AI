@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Crown, Home, Trophy, BarChart3, Sparkles } from "lucide-react";
+import { Crown, Home, Trophy, BarChart3, Sparkles, MessageSquare } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -9,6 +9,7 @@ const Navigation = () => {
     { href: "/", label: "Home", icon: Home },
     { href: "/player-stats", label: "Players", icon: Crown },
     { href: "/leaderboards", label: "Leaderboards", icon: Trophy },
+    { href: "/ai-coach", label: "AI Coach", icon: MessageSquare },
     { href: "/analyze", label: "Analyze", icon: Sparkles },
     { href: "/puzzles", label: "Puzzles", icon: BarChart3 },
   ];

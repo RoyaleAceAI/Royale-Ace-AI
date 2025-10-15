@@ -1,66 +1,73 @@
 import Navigation from "@/components/Navigation";
-import PuzzleBattlefield from "@/components/PuzzleBattlefield";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
-  Puzzle, 
-  Trophy, 
-  Target, 
-  Zap,
+  PlayCircle, 
+  Clock,
+  User,
   TrendingUp,
-  RotateCcw,
   Filter,
-  Brain,
-  Sparkles
+  Video,
+  Sparkles,
+  CheckCircle2,
+  BookmarkPlus,
+  X
 } from "lucide-react";
-import { getRandomPuzzles, PuzzleScenario } from "@/data/puzzleScenarios";
+import { proVideos, getAllProPlayers, type ProVideo } from "@/data/videoData";
 import { useToast } from "@/hooks/use-toast";
 
 const Puzzles = () => {
-  const [currentPuzzle, setCurrentPuzzle] = useState<PuzzleScenario | null>(null);
-  const [completedPuzzles, setCompletedPuzzles] = useState<number[]>([]);
-  const [totalScore, setTotalScore] = useState(0);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
-  const [puzzleHistory, setPuzzleHistory] = useState<{ puzzleId: number; score: number }[]>([]);
+  const [selectedProPlayer, setSelectedProPlayer] = useState<string | null>(null);
+  const [watchedVideos, setWatchedVideos] = useState<string[]>([]);
+  const [savedVideos, setSavedVideos] = useState<string[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<ProVideo | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadNewPuzzle();
-  }, []);
-
-  const loadNewPuzzle = (difficulty?: string) => {
-    const puzzles = getRandomPuzzles(1, difficulty || selectedDifficulty || undefined);
-    if (puzzles.length > 0) {
-      setCurrentPuzzle(puzzles[0]);
+  const getDifficultyColor = (difficulty: string) => {
+    switch(difficulty) {
+      case "beginner": return "bg-green-500/20 text-green-400 border-green-500/30";
+      case "intermediate": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+      case "advanced": return "bg-red-500/20 text-red-400 border-red-500/30";
+      default: return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
   };
 
-  const handlePuzzleComplete = (score: number) => {
-    if (!currentPuzzle) return;
+  const filteredVideos = proVideos.filter(video => {
+    if (selectedDifficulty && video.difficulty !== selectedDifficulty) return false;
+    if (selectedProPlayer && video.proPlayer !== selectedProPlayer) return false;
+    return true;
+  });
 
-    setCompletedPuzzles([...completedPuzzles, currentPuzzle.id]);
-    setTotalScore(totalScore + score);
-    setPuzzleHistory([...puzzleHistory, { puzzleId: currentPuzzle.id, score }]);
+  const toggleWatched = (videoId: string) => {
+    setWatchedVideos(prev => 
+      prev.includes(videoId) 
+        ? prev.filter(id => id !== videoId)
+        : [...prev, videoId]
+    );
+  };
 
+  const toggleSaved = (videoId: string) => {
+    const isSaved = savedVideos.includes(videoId);
+    setSavedVideos(prev => 
+      isSaved 
+        ? prev.filter(id => id !== videoId)
+        : [...prev, videoId]
+    );
+    
     toast({
-      title: "Puzzle Complete!",
-      description: `You scored ${score}/100 points`,
-      variant: score >= 80 ? "default" : "destructive",
+      title: isSaved ? "Removed from saved" : "Saved for later",
+      description: isSaved ? "Video removed from your list" : "Added to your watch later list",
     });
   };
 
-  const averageScore = puzzleHistory.length > 0 
-    ? Math.round(puzzleHistory.reduce((acc, h) => acc + h.score, 0) / puzzleHistory.length)
-    : 0;
-
   const stats = {
-    completed: completedPuzzles.length,
-    averageScore,
-    totalScore,
-    streak: puzzleHistory.filter(h => h.score >= 80).length
+    watched: watchedVideos.length,
+    saved: savedVideos.length,
+    total: proVideos.length,
+    completion: Math.round((watchedVideos.length / proVideos.length) * 100)
   };
 
   return (
@@ -75,15 +82,15 @@ const Puzzles = () => {
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-2">
                   <span className="bg-gradient-primary bg-clip-text text-transparent">
-                    Strategic Puzzles
+                    Pro Player Analysis
                   </span>
                 </h1>
                 <p className="text-xl text-muted-foreground">
-                  Master real gameplay scenarios with interactive training
+                  Learn from the best Clash Royale players in the world
                 </p>
               </div>
               <div className="hidden md:flex items-center gap-2">
-                <Brain className="w-8 h-8 text-primary" />
+                <Video className="w-8 h-8 text-primary" />
                 <Sparkles className="w-6 h-6 text-accent animate-pulse" />
               </div>
             </div>
@@ -92,197 +99,342 @@ const Puzzles = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <Card className="p-4 bg-card/50 border-border">
                 <div className="flex items-center gap-3">
-                  <Puzzle className="w-5 h-5 text-primary" />
+                  <Video className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Completed</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.completed}</p>
+                    <p className="text-sm text-muted-foreground">Total Videos</p>
+                    <p className="text-2xl font-bold text-foreground">{stats.total}</p>
                   </div>
                 </div>
               </Card>
               
               <Card className="p-4 bg-card/50 border-border">
                 <div className="flex items-center gap-3">
-                  <Target className="w-5 h-5 text-secondary" />
+                  <CheckCircle2 className="w-5 h-5 text-success" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Avg Score</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.averageScore}%</p>
+                    <p className="text-sm text-muted-foreground">Watched</p>
+                    <p className="text-2xl font-bold text-foreground">{stats.watched}</p>
                   </div>
                 </div>
               </Card>
               
               <Card className="p-4 bg-card/50 border-border">
                 <div className="flex items-center gap-3">
-                  <Trophy className="w-5 h-5 text-accent" />
+                  <BookmarkPlus className="w-5 h-5 text-accent" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Points</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.totalScore}</p>
+                    <p className="text-sm text-muted-foreground">Saved</p>
+                    <p className="text-2xl font-bold text-foreground">{stats.saved}</p>
                   </div>
                 </div>
               </Card>
               
               <Card className="p-4 bg-card/50 border-border">
                 <div className="flex items-center gap-3">
-                  <Zap className="w-5 h-5 text-success" />
+                  <TrendingUp className="w-5 h-5 text-secondary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Perfect Streak</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.streak}</p>
+                    <p className="text-sm text-muted-foreground">Progress</p>
+                    <p className="text-2xl font-bold text-foreground">{stats.completion}%</p>
                   </div>
                 </div>
               </Card>
             </div>
 
-            {/* Difficulty Filter */}
-            <div className="flex gap-3 items-center mb-6">
-              <span className="text-sm font-medium text-muted-foreground">Difficulty:</span>
-              <Button
-                variant={selectedDifficulty === null ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSelectedDifficulty(null);
-                  loadNewPuzzle();
-                }}
-              >
-                All
-              </Button>
-              <Button
-                variant={selectedDifficulty === "beginner" ? "success" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSelectedDifficulty("beginner");
-                  loadNewPuzzle("beginner");
-                }}
-              >
-                Beginner
-              </Button>
-              <Button
-                variant={selectedDifficulty === "intermediate" ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSelectedDifficulty("intermediate");
-                  loadNewPuzzle("intermediate");
-                }}
-              >
-                Intermediate
-              </Button>
-              <Button
-                variant={selectedDifficulty === "advanced" ? "destructive" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSelectedDifficulty("advanced");
-                  loadNewPuzzle("advanced");
-                }}
-              >
-                Advanced
-              </Button>
+            {/* Filters */}
+            <div className="space-y-4">
+              <div className="flex gap-3 items-center flex-wrap">
+                <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Filter className="w-4 h-4" />
+                  Difficulty:
+                </span>
+                <Button
+                  variant={selectedDifficulty === null ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedDifficulty(null)}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={selectedDifficulty === "beginner" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedDifficulty("beginner")}
+                  className={selectedDifficulty === "beginner" ? "bg-green-600 hover:bg-green-700" : ""}
+                >
+                  Beginner
+                </Button>
+                <Button
+                  variant={selectedDifficulty === "intermediate" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedDifficulty("intermediate")}
+                  className={selectedDifficulty === "intermediate" ? "bg-yellow-600 hover:bg-yellow-700" : ""}
+                >
+                  Intermediate
+                </Button>
+                <Button
+                  variant={selectedDifficulty === "advanced" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedDifficulty("advanced")}
+                  className={selectedDifficulty === "advanced" ? "bg-red-600 hover:bg-red-700" : ""}
+                >
+                  Advanced
+                </Button>
+              </div>
+
+              <div className="flex gap-3 items-center flex-wrap">
+                <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Pro Player:
+                </span>
+                <Button
+                  variant={selectedProPlayer === null ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedProPlayer(null)}
+                >
+                  All Players
+                </Button>
+                {getAllProPlayers().map(player => (
+                  <Button
+                    key={player}
+                    variant={selectedProPlayer === player ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedProPlayer(player)}
+                  >
+                    {player}
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Puzzle Area */}
-            <div className="lg:col-span-2">
-              {currentPuzzle ? (
-                <PuzzleBattlefield 
-                  puzzle={currentPuzzle} 
-                  onComplete={handlePuzzleComplete}
-                />
-              ) : (
-                <Card className="p-8 bg-gradient-card border-primary/30 text-center">
-                  <Puzzle className="w-16 h-16 text-primary mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    Loading Puzzle...
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Preparing your next challenge
-                  </p>
-                </Card>
-              )}
-
-              {/* Next Puzzle Button */}
-              <div className="mt-6 flex justify-center">
-                <Button 
-                  variant="hero" 
-                  size="lg"
-                  onClick={() => loadNewPuzzle()}
-                  className="flex items-center gap-2"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Next Puzzle
-                </Button>
-              </div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Progress Card */}
-              <Card className="p-6 bg-gradient-card border-primary/30">
-                <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-success" />
-                  Your Progress
-                </h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">Skill Level</span>
-                      <span className="text-foreground font-medium">
-                        {averageScore >= 80 ? "Expert" : averageScore >= 60 ? "Advanced" : "Learning"}
-                      </span>
+          {/* Video Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredVideos.map((video) => (
+              <Card 
+                key={video.id} 
+                className="bg-card/50 border-border overflow-hidden hover:border-primary/50 transition-all cursor-pointer group"
+                onClick={() => setSelectedVideo(video)}
+              >
+                {/* Thumbnail */}
+                <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
+                  <img 
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                    alt={video.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                    <PlayCircle className="w-16 h-16 text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                  </div>
+                  {watchedVideos.includes(video.id) && (
+                    <div className="absolute top-2 right-2">
+                      <Badge className="bg-success text-white">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Watched
+                      </Badge>
                     </div>
-                    <Progress value={averageScore} className="h-2" />
+                  )}
+                  <div className="absolute bottom-2 right-2">
+                    <Badge variant="secondary" className="bg-black/70 text-white">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {video.duration}
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <Badge className={`${getDifficultyColor(video.difficulty)} border`}>
+                      {video.difficulty}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSaved(video.id);
+                      }}
+                    >
+                      <BookmarkPlus 
+                        className={`w-4 h-4 ${savedVideos.includes(video.id) ? 'fill-accent text-accent' : ''}`}
+                      />
+                    </Button>
                   </div>
 
-                  <div className="pt-4 border-t border-border">
-                    <p className="text-sm text-muted-foreground mb-3">Recent Performance</p>
+                  <h3 className="text-lg font-bold text-foreground mb-1 line-clamp-2">
+                    {video.title}
+                  </h3>
+                  
+                  <div className="flex items-center gap-2 mb-3">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{video.proPlayer}</span>
+                  </div>
+
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                    {video.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {video.concepts.slice(0, 3).map((concept, idx) => (
+                      <Badge key={idx} variant="outline" className="text-xs">
+                        {concept}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWatched(video.id);
+                    }}
+                  >
+                    {watchedVideos.includes(video.id) ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        Mark as Unwatched
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        Mark as Watched
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {filteredVideos.length === 0 && (
+            <Card className="p-12 text-center bg-card/50 border-border">
+              <Video className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                No videos found
+              </h3>
+              <p className="text-muted-foreground">
+                Try adjusting your filters to see more videos
+              </p>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* Video Modal */}
+      {selectedVideo && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedVideo(null)}
+        >
+          <div 
+            className="bg-background rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-background border-b border-border p-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-foreground">{selectedVideo.title}</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedVideo(null)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Video Player */}
+              <div className="aspect-video w-full rounded-lg overflow-hidden bg-black">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`}
+                  title={selectedVideo.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+
+              {/* Video Info */}
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <Badge className={`${getDifficultyColor(selectedVideo.difficulty)} border`}>
+                    {selectedVideo.difficulty}
+                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{selectedVideo.proPlayer}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{selectedVideo.duration}</span>
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground mb-4">{selectedVideo.description}</p>
+
+                <div className="mb-4">
+                  <h3 className="font-semibold text-foreground mb-2">Key Concepts:</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedVideo.concepts.map((concept, idx) => (
+                      <Badge key={idx} variant="outline">
+                        {concept}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedVideo.keyMoments && selectedVideo.keyMoments.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-3">Key Moments:</h3>
                     <div className="space-y-2">
-                      {puzzleHistory.slice(-5).reverse().map((history, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">
-                            Puzzle #{history.puzzleId}
-                          </span>
-                          <Badge variant={
-                            history.score >= 80 ? "default" : 
-                            history.score >= 60 ? "secondary" : 
-                            "destructive"
-                          } className="text-xs">
-                            {history.score}%
+                      {selectedVideo.keyMoments.map((moment, idx) => (
+                        <div key={idx} className="flex gap-3 p-3 bg-card/50 rounded-lg border border-border">
+                          <Badge variant="secondary" className="shrink-0">
+                            {moment.time}
                           </Badge>
+                          <p className="text-sm text-muted-foreground">{moment.description}</p>
                         </div>
                       ))}
                     </div>
                   </div>
-                </div>
-              </Card>
+                )}
+              </div>
 
-              {/* Tips Card */}
-              <Card className="p-6 bg-card/50 border-border">
-                <h3 className="text-lg font-bold text-foreground mb-3">
-                  💡 Pro Tips
-                </h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Consider elixir trades in every placement</li>
-                  <li>• Place troops to maximize counter-push potential</li>
-                  <li>• Use buildings to pull tanks to the center</li>
-                  <li>• Save spells for maximum value</li>
-                  <li>• Practice kiting techniques with cheap units</li>
-                </ul>
-              </Card>
-
-              {/* Challenge Mode */}
-              <Card className="p-6 bg-gradient-primary text-white">
-                <h3 className="text-lg font-bold mb-2">🏆 Daily Challenge</h3>
-                <p className="text-sm mb-4 opacity-90">
-                  Complete 5 puzzles with 80%+ score
-                </p>
-                <div className="flex justify-between items-center">
-                  <Progress value={(stats.streak / 5) * 100} className="flex-1 mr-3 h-2" />
-                  <span className="text-sm font-medium">{stats.streak}/5</span>
-                </div>
-              </Card>
+              {/* Actions */}
+              <div className="flex gap-3">
+                <Button
+                  variant="default"
+                  className="flex-1"
+                  onClick={() => toggleWatched(selectedVideo.id)}
+                >
+                  {watchedVideos.includes(selectedVideo.id) ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Mark as Unwatched
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Mark as Watched
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => toggleSaved(selectedVideo.id)}
+                >
+                  <BookmarkPlus className={`w-4 h-4 ${savedVideos.includes(selectedVideo.id) ? 'fill-accent text-accent' : ''}`} />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

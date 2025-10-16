@@ -1,20 +1,23 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
 };
 
-serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, {
+      status: 200,
+      headers: corsHeaders
+    });
   }
 
   try {
     const { endpoint } = await req.json();
     const API_KEY = Deno.env.get('CLASH_ROYALE_API_KEY');
-    
+
     if (!API_KEY) {
       throw new Error('CLASH_ROYALE_API_KEY is not configured');
     }
@@ -25,18 +28,17 @@ serve(async (req) => {
 
     console.log('Fetching Clash Royale API:', endpoint);
 
-    // Use RoyaleAPI proxy to avoid IP restrictions
-    const response = await fetch(`https://proxy.royaleapi.dev/v1${endpoint}`, {
+    const response = await fetch(`https://api.clashroyale.com/v1${endpoint}`, {
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Clash Royale API error:', response.status, errorText);
-      
+
       if (response.status === 404) {
         return new Response(
           JSON.stringify({ error: 'Player or resource not found' }),
@@ -45,25 +47,28 @@ serve(async (req) => {
       }
       if (response.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'IP restriction: Your API key only allows requests from 51.81.93.75. Please remove IP restrictions in your Clash Royale API settings.' }),
+          JSON.stringify({ error: 'Access forbidden. Please check your API key configuration.' }),
           { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      
-      throw new Error(`API Error: ${response.status}`);
+
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('Clash Royale API success');
+    console.log('Clash Royale API success for endpoint:', endpoint);
 
     return new Response(
       JSON.stringify(data),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     );
   } catch (error) {
     console.error('Error in clash-royale-proxy:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

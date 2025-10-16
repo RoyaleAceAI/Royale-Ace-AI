@@ -13,182 +13,182 @@ export interface ProVideo {
 export const proVideos: ProVideo[] = [
   {
     id: "1",
-    youtubeId: "dQw4w9WgXcQ",
-    title: "Perfect Elixir Management - Arena 15",
+    youtubeId: "81s4tR22JpA",
+    title: "The #1 Cycle Deck is Crazy",
     proPlayer: "Hunter CR",
-    difficulty: "beginner",
-    duration: "12:34",
-    concepts: ["Elixir Management", "Card Rotation", "Defense"],
-    description: "Learn the fundamentals of elixir management and how to always stay ahead of your opponent.",
+    difficulty: "advanced",
+    duration: "10:23",
+    concepts: ["Cycle Deck", "Fast Cycle", "Defense"],
+    description: "Watch Hunter CR dominate top ladder with the #1 cycle deck in the current meta.",
     keyMoments: [
-      { time: "2:15", description: "Elixir counting basics" },
-      { time: "5:30", description: "When to invest elixir" },
-      { time: "8:45", description: "Comeback mechanics" }
+      { time: "1:30", description: "Deck overview" },
+      { time: "4:15", description: "Cycling techniques" },
+      { time: "7:45", description: "Defensive positioning" }
     ]
   },
   {
     id: "2",
-    youtubeId: "kJQP7kiw5Fk",
-    title: "Advanced Bridge Spam Techniques",
+    youtubeId: "wGiMtL7iY0E",
+    title: "8000+ 3.0 Xbow Top Ladder Gameplay",
     proPlayer: "sk_55",
     difficulty: "advanced",
-    duration: "15:22",
-    concepts: ["Bridge Spam", "Aggression", "Timing"],
-    description: "Master the art of bridge spam with perfect timing and card sequencing.",
+    duration: "16:45",
+    concepts: ["X-Bow", "Cycle", "Top Ladder"],
+    description: "Watch sk_55 featuring Betfas reaching 8000+ trophies with the classic 3.0 X-Bow cycle deck.",
     keyMoments: [
-      { time: "1:00", description: "Opening plays" },
-      { time: "6:20", description: "Double lane pressure" },
-      { time: "11:30", description: "Overtime tactics" }
+      { time: "2:00", description: "Opening placements" },
+      { time: "8:30", description: "Defensive X-Bow mastery" },
+      { time: "14:00", description: "Overtime pressure" }
     ]
   },
   {
     id: "3",
-    youtubeId: "3JZ_D3ELwOQ",
-    title: "Hog Cycle Complete Guide",
+    youtubeId: "QEHRi9GpJA4",
+    title: "How I Hit #1 with Miner Rocket",
     proPlayer: "Nate - Clash Royale",
-    difficulty: "intermediate",
-    duration: "18:45",
-    concepts: ["Hog Cycle", "Prediction", "Spell Usage"],
-    description: "Everything you need to know about playing Hog Cycle effectively in the current meta.",
+    difficulty: "advanced",
+    duration: "42:15",
+    concepts: ["Miner", "Rocket Cycle", "Top Ladder"],
+    description: "Complete breakdown of Nate's climb to #1 in the world using Miner Rocket control deck.",
     keyMoments: [
-      { time: "3:00", description: "Card synergies" },
-      { time: "8:15", description: "Defensive hog placements" },
-      { time: "14:20", description: "Spell cycling for tower" }
+      { time: "1:08", description: "Mortar Rocket matchup" },
+      { time: "9:52", description: "Against Mega Knight" },
+      { time: "34:23", description: "X-Bow matchup" }
     ]
   },
   {
     id: "4",
-    youtubeId: "L_jWHffIx5E",
-    title: "Counter Push Mastery",
-    proPlayer: "Efbox",
+    youtubeId: "LejhZ_VubmE",
+    title: "How to Play Miner Cycle in 2024",
+    proPlayer: "Nate - Clash Royale",
     difficulty: "intermediate",
-    duration: "14:10",
-    concepts: ["Counter Push", "Surviving Troops", "Elixir Advantage"],
-    description: "Turn defense into offense with perfect counter pushing strategies.",
+    duration: "12:18",
+    concepts: ["Miner", "Cycle", "Control"],
+    description: "Complete guide to the best Miner Cycle deck in 2024 from pro player Nate.",
     keyMoments: [
-      { time: "2:30", description: "Recognizing opportunities" },
-      { time: "7:00", description: "Building big pushes" },
-      { time: "10:45", description: "Split lane counters" }
+      { time: "2:00", description: "Deck breakdown" },
+      { time: "6:30", description: "Miner placements" },
+      { time: "9:45", description: "Defensive strategies" }
     ]
   },
   {
     id: "5",
-    youtubeId: "9bZkp7q19f0",
-    title: "Lava Hound Beatdown Breakdown",
-    proPlayer: "Ryley",
+    youtubeId: "C_BUFDd4XTE",
+    title: "ULTIMATE Miner Control Guide",
+    proPlayer: "Nate - Clash Royale",
     difficulty: "advanced",
-    duration: "16:30",
-    concepts: ["Beatdown", "Building Big Pushes", "Support Cards"],
-    description: "Comprehensive guide to dominating with Lava Hound in high trophy ranges.",
+    duration: "55:30",
+    concepts: ["Miner", "Control", "Matchups"],
+    description: "Comprehensive Miner Control guide covering every major matchup in detail.",
     keyMoments: [
-      { time: "1:45", description: "When to play Lava Hound" },
-      { time: "6:50", description: "Supporting your tank" },
-      { time: "12:00", description: "Defending opposite lane" }
+      { time: "0:28", description: "Hog 2.6 matchup" },
+      { time: "13:33", description: "Graveyard freeze" },
+      { time: "39:46", description: "Golem 3M matchup" }
     ]
   },
   {
     id: "6",
-    youtubeId: "jNQXAC9IVRw",
-    title: "X-Bow Placement Guide",
-    proPlayer: "Mohamed Light",
-    difficulty: "advanced",
-    duration: "13:25",
-    concepts: ["X-Bow", "Positioning", "Defensive Buildings"],
-    description: "Perfect your X-Bow placements and learn when to go offensive vs defensive.",
+    youtubeId: "dHCbn873o5o",
+    title: "How to Play Golem in 2024",
+    proPlayer: "Ryley",
+    difficulty: "intermediate",
+    duration: "14:30",
+    concepts: ["Golem", "Beatdown", "Building Pushes"],
+    description: "Ultimate Golem beatdown deck guide from top player Ryley with 72K+ views.",
     keyMoments: [
-      { time: "2:00", description: "Offensive vs defensive" },
-      { time: "6:30", description: "Against beatdown" },
-      { time: "10:15", description: "Tesla synergy" }
+      { time: "2:15", description: "When to play Golem" },
+      { time: "7:00", description: "Support cards" },
+      { time: "11:30", description: "Defending opposite lane" }
     ]
   },
   {
     id: "7",
-    youtubeId: "yPYZpwSpKmA",
-    title: "Beginner's Guide to Clash Royale",
-    proPlayer: "Innvader",
-    difficulty: "beginner",
-    duration: "20:15",
-    concepts: ["Basics", "Card Mechanics", "Arena Progression"],
-    description: "Start your Clash Royale journey the right way with fundamental concepts.",
+    youtubeId: "BlQ6FM99Xa0",
+    title: "How To Win A Classic Challenge (2024)",
+    proPlayer: "Ryley",
+    difficulty: "intermediate",
+    duration: "18:42",
+    concepts: ["Classic Challenge", "Tournament", "Deck Building"],
+    description: "Learn how to get 12 wins in Classic Challenges with expert strategies from Ryley.",
     keyMoments: [
-      { time: "0:00", description: "Game introduction" },
-      { time: "5:00", description: "Building your first deck" },
-      { time: "15:00", description: "Common mistakes to avoid" }
+      { time: "1:30", description: "Best challenge decks" },
+      { time: "8:15", description: "Key matchup tips" },
+      { time: "15:00", description: "Final wins strategy" }
     ]
   },
   {
     id: "8",
-    youtubeId: "2Vv-BfVoq4g",
-    title: "Graveyard Control Mastery",
-    proPlayer: "Hunter CR",
-    difficulty: "intermediate",
-    duration: "17:40",
-    concepts: ["Graveyard", "Tank Synergy", "Poison Timing"],
-    description: "Learn to control the pace of the game with Graveyard and tank combinations.",
+    youtubeId: "-A153Q8K4nc",
+    title: "Mohamed Light's MAIN Deck Has TAKEN OVER",
+    proPlayer: "Mohamed Light",
+    difficulty: "advanced",
+    duration: "16:28",
+    concepts: ["Meta Deck", "Top Ladder", "High Skill"],
+    description: "Ryley analyzes Mohamed Light's signature deck that's dominating the meta (288K views).",
     keyMoments: [
-      { time: "3:20", description: "Graveyard placement variations" },
-      { time: "8:45", description: "Best tank pairings" },
-      { time: "13:00", description: "Baiting out counters" }
+      { time: "2:00", description: "Deck overview" },
+      { time: "7:30", description: "Why it's so strong" },
+      { time: "13:00", description: "Key techniques" }
     ]
   },
   {
     id: "9",
-    youtubeId: "dU1xS07y-FA",
-    title: "PEKKA Bridge Spam Tutorial",
-    proPlayer: "sk_55",
+    youtubeId: "FpQq6azW_F4",
+    title: "The Deck That Beats EVERYTHING",
+    proPlayer: "Innvader",
     difficulty: "advanced",
-    duration: "19:00",
-    concepts: ["PEKKA", "Bridge Spam", "Dual Lane Pressure"],
-    description: "Dominate with PEKKA Bridge Spam and learn the perfect card sequencing.",
+    duration: "14:15",
+    concepts: ["Meta Counter", "Versatile Deck", "High Win Rate"],
+    description: "Innvader showcases an incredibly versatile deck that counters almost every meta deck.",
     keyMoments: [
-      { time: "2:45", description: "Opening sequence" },
-      { time: "9:00", description: "When to commit PEKKA" },
-      { time: "15:20", description: "Opposite lane pressure" }
+      { time: "1:45", description: "Deck breakdown" },
+      { time: "6:20", description: "Against beatdown" },
+      { time: "11:00", description: "Cycle matchups" }
     ]
   },
   {
     id: "10",
-    youtubeId: "kffacxfA7G4",
-    title: "Spell Cycling Strategy",
-    proPlayer: "Nate - Clash Royale",
+    youtubeId: "wpUwbVomLYM",
+    title: "How To Play EVERY Evolution",
+    proPlayer: "Innvader",
     difficulty: "beginner",
-    duration: "11:50",
-    concepts: ["Spell Cycling", "Rocket", "Fireball"],
-    description: "When and how to cycle spells for tower damage effectively.",
+    duration: "13:52",
+    concepts: ["Evolutions", "Card Mechanics", "Deck Building"],
+    description: "Complete guide showing how to properly use every evolution card in Clash Royale.",
     keyMoments: [
-      { time: "1:30", description: "Rocket vs Lightning" },
-      { time: "5:00", description: "Value trades" },
-      { time: "8:30", description: "Overtime spell cycling" }
+      { time: "0:00", description: "Evolution basics" },
+      { time: "5:30", description: "Best evolution combos" },
+      { time: "10:45", description: "Common mistakes" }
     ]
   },
   {
     id: "11",
-    youtubeId: "SDTZ7iX4vTQ",
-    title: "Royal Giant Meta Analysis",
-    proPlayer: "Efbox",
+    youtubeId: "kzO0CMu0VG4",
+    title: "How to Win EVERY Game You Play",
+    proPlayer: "Hunter CR",
     difficulty: "intermediate",
-    duration: "15:55",
-    concepts: ["Royal Giant", "Win Conditions", "Meta Decks"],
-    description: "Everything about Royal Giant in the current meta and how to counter it.",
+    duration: "11:45",
+    concepts: ["Win Conditions", "Consistency", "Strategy"],
+    description: "Hunter CR reveals the mindset and strategies to consistently win more games.",
     keyMoments: [
-      { time: "2:00", description: "Current RG decks" },
-      { time: "7:30", description: "Best counters" },
-      { time: "12:00", description: "Playing as RG" }
+      { time: "1:20", description: "Mental approach" },
+      { time: "5:00", description: "Adapting to opponents" },
+      { time: "9:15", description: "Closing out games" }
     ]
   },
   {
     id: "12",
-    youtubeId: "pt8VYOfr8To",
-    title: "Miner Control Gameplay",
-    proPlayer: "Ryley",
-    difficulty: "intermediate",
-    duration: "14:20",
-    concepts: ["Miner", "Chip Damage", "Control Decks"],
-    description: "Control the game with Miner chip damage and perfect defensive play.",
+    youtubeId: "EpRp9S0s1k0",
+    title: "1v1ing my Viewers in Clash Royale",
+    proPlayer: "sk_55",
+    difficulty: "beginner",
+    duration: "18:30",
+    concepts: ["Friendly Battles", "Deck Variety", "Community"],
+    description: "Watch sk_55 battle viewers with various decks and provide live commentary and tips.",
     keyMoments: [
-      { time: "1:15", description: "Miner placements" },
-      { time: "6:00", description: "Poison timing" },
-      { time: "10:45", description: "Building elixir advantage" }
+      { time: "2:00", description: "First viewer battle" },
+      { time: "8:45", description: "Deck analysis" },
+      { time: "15:00", description: "Pro tips shared" }
     ]
   }
 ];

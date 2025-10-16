@@ -197,7 +197,7 @@ class ClashRoyaleAPI {
 
   // Get Path of Legends leaderboard (global)
   async getPathOfLegendsLeaderboard(seasonId: string, limit: number = 100) {
-    return this.fetchAPI(`/locations/global/pathoflegend/${seasonId}/rankings/players?limit=${limit}`);
+    return this.fetchAPI(`/locations/global/seasons/${seasonId}/rankings/players?limit=${limit}`);
   }
 
   // Get top clans globally
@@ -212,7 +212,8 @@ class ClashRoyaleAPI {
 
   // Get current season info for Path of Legends
   async getCurrentSeason() {
-    return this.fetchAPI('/locations/global/pathoflegend');
+    // Path of Legends seasons endpoint
+    return this.fetchAPI('/locations/global/seasons');
   }
 
   // Search clans

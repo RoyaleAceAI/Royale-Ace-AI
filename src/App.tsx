@@ -11,6 +11,7 @@ import PlayerStats from "./pages/PlayerStats";
 import Leaderboards from "./pages/Leaderboards";
 import AICoach from "./pages/AICoach";
 import Auth from "./pages/Auth";
+import Decks from "./pages/Decks";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/player-stats" element={<PlayerStats />} />
           <Route path="/player/:tag" element={<PlayerStats />} />
           <Route path="/leaderboards" element={<Leaderboards />} />
+          <Route path="/decks" element={<Decks />} />
           <Route path="/ai-coach" element={<AICoach />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

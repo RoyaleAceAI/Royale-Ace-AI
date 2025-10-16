@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Crown, Home, Trophy, BarChart3, Sparkles, MessageSquare, LogOut, User } from "lucide-react";
+import { Crown, Home, Trophy, BarChart3, Sparkles, MessageSquare, LogOut, User, Layers } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -26,6 +26,7 @@ const Navigation = () => {
     { href: "/", label: "Home", icon: Home },
     { href: "/player-stats", label: "Players", icon: Crown },
     { href: "/leaderboards", label: "Leaderboards", icon: Trophy },
+    { href: "/decks", label: "Decks", icon: Layers },
     { href: "/ai-coach", label: "AI Coach", icon: MessageSquare },
     { href: "/analyze", label: "Analyze", icon: Sparkles },
     { href: "/puzzles", label: "Puzzles", icon: BarChart3 },

@@ -10,6 +10,7 @@ import Puzzles from "./pages/Puzzles";
 import PlayerStats from "./pages/PlayerStats";
 import Leaderboards from "./pages/Leaderboards";
 import AICoach from "./pages/AICoach";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/analyze" element={<Analyze />} />
           <Route path="/puzzles" element={<Puzzles />} />
           <Route path="/results" element={<Results />} />

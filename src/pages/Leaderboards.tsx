@@ -29,34 +29,61 @@ const Leaderboards = () => {
   const loadInitialData = async () => {
     try {
       setLoading(true);
-      
-      // Load global leaderboard
-      const globalData = await clashRoyaleApi.getGlobalLeaderboard(50);
-      setGlobalPlayers(globalData.items);
 
-      // Load locations
-      const locationsData = await clashRoyaleApi.getLocations();
-      setLocations(locationsData.items.filter((loc: any) => loc.isCountry));
+      try {
+        const globalData = await clashRoyaleApi.getGlobalLeaderboard(50);
+        if (globalData?.items) {
+          setGlobalPlayers(globalData.items);
+        }
+      } catch (err) {
+        console.error('Error loading global leaderboard:', err);
+      }
 
-      // Load global clan leaderboard
-      const clanData = await clashRoyaleApi.getGlobalClanLeaderboard(50);
-      setClans(clanData.items);
+      try {
+        const locationsData = await clashRoyaleApi.getLocations();
+        if (locationsData?.items) {
+          setLocations(locationsData.items.filter((loc: any) => loc.isCountry));
+        }
+      } catch (err) {
+        console.error('Error loading locations:', err);
+      }
 
-      // Load current Path of Legends season
-      const seasonData = await clashRoyaleApi.getCurrentSeason();
-      if (seasonData?.items?.length > 0) {
-        const currentSeasonId = seasonData.items[0].id;
-        setCurrentSeason(currentSeasonId);
-        
-        // Load Path of Legends leaderboard
-        const pathData = await clashRoyaleApi.getPathOfLegendsLeaderboard(currentSeasonId, 50);
-        setPathOfLegendsPlayers(pathData.items);
+      try {
+        const clanData = await clashRoyaleApi.getGlobalClanLeaderboard(50);
+        if (clanData?.items) {
+          setClans(clanData.items);
+        }
+      } catch (err) {
+        console.error('Error loading clan leaderboard:', err);
+      }
+
+      try {
+        const seasonData = await clashRoyaleApi.getCurrentSeason();
+        if (seasonData?.items?.length > 0) {
+          const currentSeasonId = seasonData.items[0].id;
+          setCurrentSeason(currentSeasonId);
+
+          const pathData = await clashRoyaleApi.getPathOfLegendsLeaderboard(currentSeasonId, 50);
+          if (pathData?.items) {
+            setPathOfLegendsPlayers(pathData.items);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading Path of Legends:', err);
+      }
+
+      if (globalPlayers.length === 0 && clans.length === 0) {
+        toast({
+          title: "API Configuration Required",
+          description: "Please configure your Clash Royale API key to view leaderboards",
+          variant: "destructive",
+        });
       }
     } catch (error: any) {
       console.error('Error loading leaderboards:', error);
       toast({
         title: "Error",
-        description: "Failed to load leaderboard data",
+        description: "Failed to load leaderboard data. Please check API configuration.",
         variant: "destructive",
       });
     } finally {
